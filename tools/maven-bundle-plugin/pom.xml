@@ -21,7 +21,7 @@
  <parent>
    <artifactId>felix-parent</artifactId>
    <groupId>org.apache.felix</groupId>
-   <version>7</version>
+   <version>8-SNAPSHOT</version>
    <relativePath>../../pom/pom.xml</relativePath>
  </parent>
 
