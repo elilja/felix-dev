@@ -61,6 +61,7 @@
    <maven.site.path>bundle-plugin-archives/bundle-plugin-LATEST</maven.site.path>
    <project.build.outputTimestamp>1684139090</project.build.outputTimestamp>
 
+   <maven-invoker-plugin.version>3.6.0</maven-invoker-plugin.version>
    <maven-plugin-tools.version>3.9.0</maven-plugin-tools.version>
  </properties>
 
@@ -144,8 +145,9 @@
           </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>${maven-invoker-plugin.version}</version>
         <configuration>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
