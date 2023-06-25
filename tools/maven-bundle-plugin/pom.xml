@@ -49,7 +49,6 @@
         <plexus-archiver.version>4.7.1</plexus-archiver.version>
 
         <maven-invoker-plugin.version>3.6.0</maven-invoker-plugin.version>
-        <maven-project-info-reports-plugin.version>3.4.5</maven-project-info-reports-plugin.version>
     </properties>
 
     <build>
@@ -65,11 +64,6 @@
                             <phase>process-classes</phase>
                         </execution>
                     </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>${maven-project-info-reports-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
