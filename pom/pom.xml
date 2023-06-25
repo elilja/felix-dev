@@ -79,11 +79,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.apache.rat</groupId>
-                    <artifactId>apache-rat-plugin</artifactId>
-                    <version>0.13</version>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.2.0</version>
@@ -122,30 +117,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <excludePackageNames>${site.javadoc.exclude}</excludePackageNames>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.rat</groupId>
-                <artifactId>apache-rat-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- check src only (except remote resources additions) -->
-                    <includes>
-                        <include>src/**</include>
-                    </includes>
-                    <excludes combine.children="append">
-                        <!--  Used by maven-remote-resources-plugin -->
-                        <exclude>src/main/appended-resources/**</exclude>
-                        <!-- Exclude all JSON files -->
-                        <exclude>**/*.json</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
