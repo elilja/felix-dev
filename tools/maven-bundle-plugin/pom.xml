@@ -46,6 +46,7 @@
 
         <junit.version>4.13.2</junit.version>
         <plexus-archiver.version>4.7.1</plexus-archiver.version>
+        <plexus-utils.version>3.5.1</plexus-utils.version>
     </properties>
 
     <build>
@@ -149,6 +150,11 @@
             <version>${plexus-archiver.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>${plexus-utils.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>6.0.0</version>
@@ -211,11 +217,6 @@
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-dependency-tree</artifactId>
             <version>3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <version>3.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.sonatype.plexus</groupId>
