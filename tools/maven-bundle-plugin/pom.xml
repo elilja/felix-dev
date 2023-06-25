@@ -107,14 +107,6 @@
                         <topSiteURL>scm:svn:https://svn.apache.org/repos/infra/websites/production/felix/content/components/${maven.site.path}</topSiteURL>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <artifactId>maven-scm-publish-plugin</artifactId>
-                    <version>1.1</version>
-                    <configuration>
-                        <checkoutDirectory>${user.home}/maven-sites/${maven.site.path}</checkoutDirectory>
-                        <tryUpdate>true</tryUpdate>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
