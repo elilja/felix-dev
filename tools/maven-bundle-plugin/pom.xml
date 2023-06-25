@@ -44,6 +44,7 @@
         <maven.site.path>bundle-plugin-archives/bundle-plugin-LATEST</maven.site.path>
         <project.build.outputTimestamp>1684139090</project.build.outputTimestamp>
 
+        <hamcrest.version>2.2</hamcrest.version>
         <junit.version>4.13.2</junit.version>
         <plexus-archiver.version>4.7.1</plexus-archiver.version>
         <plexus-utils.version>3.5.1</plexus-utils.version>
@@ -253,6 +254,18 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
