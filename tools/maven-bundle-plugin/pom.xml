@@ -280,22 +280,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changes-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <component>12311143</component>
-                    <versionPrefix>maven-bundle-plugin-</versionPrefix>
-                    <statusIds>Resolved,Closed</statusIds>
-                    <!-- 1000 gets a 403 -->
-                    <maxEntries>100</maxEntries>
-                    <issueManagementSystems>
-                        <issueManagementSystem>JIRA</issueManagementSystem>
-                    </issueManagementSystems>
-                    <useJql>true</useJql>
-                </configuration>
-            </plugin>
         </plugins>
     </reporting>
 </project>
