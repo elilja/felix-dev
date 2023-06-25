@@ -40,7 +40,6 @@
     </distributionManagement>
 
     <properties>
-        <felix.java.version>8</felix.java.version>
         <maven.site.path>bundle-plugin-archives/bundle-plugin-LATEST</maven.site.path>
         <project.build.outputTimestamp>1684139090</project.build.outputTimestamp>
 
@@ -88,14 +87,6 @@
                         <exclude>src/repo/**/*.pom</exclude>
                         <exclude>**/org.apache.felix_maven-bundle-plugin_manifest_xx</exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
                 </configuration>
             </plugin>
             <plugin>

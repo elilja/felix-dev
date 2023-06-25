@@ -24,8 +24,9 @@
     <properties>
         <sourceReleaseAssemblyDescriptor>source-release-zip-tar</sourceReleaseAssemblyDescriptor>
 
-        <!-- Default Java VM and API compatibility -->
-        <felix.java.version>8</felix.java.version>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Default settings for the site plugins -->
         <site.javadoc.exclude>*.impl:*.internal:</site.javadoc.exclude>
@@ -81,11 +82,6 @@
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <version>0.13</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -166,31 +162,6 @@
             </resource>
         </resources>
     </build>
-
-    <profiles>
-        <profile>
-            <id>jdk9-or-higher</id>
-            <activation>
-                <!-- syntax according to http://maven.apache.org/enforcer/enforcer-rules/versionRanges.html -->
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <!--
-                            release sets API classpath, source and target, see
-                            https://docs.oracle.com/javase/9/tools/javac.htm#GUID-AEEC9F07-CB49-4E96-8BC7-BCC2C7F725C9__GUID-D343F6B4-3FDD-43A8-AD24-43DD70214471
-                            and http://openjdk.java.net/jeps/247 -->
-                            <release>${felix.java.version}</release>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <reporting>
         <plugins>
