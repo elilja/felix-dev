@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.felix.http.base.internal.util.ServiceUtils;
 import org.jetbrains.annotations.NotNull;
@@ -98,6 +99,21 @@ public abstract class AbstractInfo<T> implements Comparable<AbstractInfo<T>>
         return result;
     }
 
+    /**
+     * Compare two info objects 
+     * @param other The other info object
+     * @return {@code true} if the objects are the same
+     */
+    public boolean isSame(final AbstractInfo<T> other) {
+        if (this.serviceId != other.serviceId) {
+            return false;
+        }
+        if (this.ranking != other.ranking) {
+            return false;
+        }
+        return Objects.equals(this.target, other.target);
+    }
+
     protected boolean isEmpty(final String value)
     {
         return value == null || value.length() == 0;
@@ -169,6 +185,9 @@ public abstract class AbstractInfo<T> implements Comparable<AbstractInfo<T>>
 
     /**
      * Get the init parameters.
+     * @param ref The service reference
+     * @param prefix The prefix
+     * @return The map of init parameters
      */
     protected Map<String, String> getInitParams(final ServiceReference<T> ref, final String prefix)
     {

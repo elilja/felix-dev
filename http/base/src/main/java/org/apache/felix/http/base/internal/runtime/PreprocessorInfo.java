@@ -19,8 +19,9 @@
 package org.apache.felix.http.base.internal.runtime;
 
 import java.util.Map;
+import java.util.Objects;
 
-import org.apache.felix.http.base.internal.jakartawrappers.PreprocessorWrapper;
+import org.apache.felix.http.base.internal.wrappers.PreprocessorWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.servlet.whiteboard.HttpWhiteboardConstants;
@@ -48,6 +49,7 @@ public class PreprocessorInfo extends WhiteboardServiceInfo<Preprocessor>
 
     /**
      * Returns an immutable map of the init parameters.
+     * @return The init parameters
      */
     public Map<String, String> getInitParameters()
     {
@@ -70,5 +72,15 @@ public class PreprocessorInfo extends WhiteboardServiceInfo<Preprocessor>
             return ((PreprocessorWrapper)preprocessor).getPreprocessor().getClass().getName();
         }
         return preprocessor.getClass().getName();
+    }
+
+
+    @Override
+    public boolean isSame(AbstractInfo<Preprocessor> other) {
+        if (!super.isSame(other)) {
+            return false;
+        }
+        final PreprocessorInfo o = (PreprocessorInfo) other;
+        return Objects.equals(this.initParams, o.initParams);
     }
 }

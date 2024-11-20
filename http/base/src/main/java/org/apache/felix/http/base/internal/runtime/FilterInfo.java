@@ -18,12 +18,14 @@
  */
 package org.apache.felix.http.base.internal.runtime;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.felix.http.base.internal.jakartawrappers.FilterWrapper;
 import org.apache.felix.http.base.internal.util.PatternUtil;
+import org.apache.felix.http.jakartawrappers.FilterWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.dto.DTO;
 import org.osgi.framework.ServiceReference;
@@ -203,6 +205,7 @@ public class FilterInfo extends WhiteboardServiceInfo<Filter>
 
     /**
      * Returns an immutable map of the init parameters.
+     * @return The init parameters
      */
     public Map<String, String> getInitParameters()
     {
@@ -224,5 +227,20 @@ public class FilterInfo extends WhiteboardServiceInfo<Filter>
             return ((FilterWrapper)filter).getFilter().getClass().getName();
         }
         return filter.getClass().getName();
+    }
+
+    @Override
+    public boolean isSame(AbstractInfo<Filter> other) {
+        if (!super.isSame(other)) {
+            return false;
+        }
+        final FilterInfo o = (FilterInfo) other;
+        return Objects.equals(this.name, o.name)
+            && Arrays.equals(this.patterns, o.patterns)
+            && Arrays.equals(this.servletNames, o.servletNames)
+            && Arrays.equals(this.regexs, o.regexs)
+            && this.asyncSupported == o.asyncSupported
+            && Arrays.equals(this.dispatcher, o.dispatcher)
+            && Objects.equals(this.initParams, o.initParams);
     }
 }

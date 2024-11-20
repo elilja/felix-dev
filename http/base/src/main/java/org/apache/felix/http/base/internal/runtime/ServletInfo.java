@@ -18,12 +18,14 @@
  */
 package org.apache.felix.http.base.internal.runtime;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.felix.http.base.internal.dispatch.MultipartConfig;
-import org.apache.felix.http.base.internal.jakartawrappers.ServletWrapper;
 import org.apache.felix.http.base.internal.util.PatternUtil;
+import org.apache.felix.http.jakartawrappers.ServletWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.dto.DTO;
 import org.osgi.framework.ServiceReference;
@@ -173,6 +175,9 @@ public class ServletInfo extends WhiteboardServiceInfo<Servlet>
 
     /**
      * Constructor for Http Service
+     * @param name The servlet name
+     * @param pattern The pattern
+     * @param initParams The init parameters
      */
     public ServletInfo(final String name,
             final String pattern,
@@ -234,7 +239,7 @@ public class ServletInfo extends WhiteboardServiceInfo<Servlet>
 
     /**
      * Returns an unmodifiable map of the init parameters.
-     * @return
+     * @return The init parameters
      */
     public Map<String, String> getInitParameters()
     {
@@ -271,5 +276,21 @@ public class ServletInfo extends WhiteboardServiceInfo<Servlet>
             return ((ServletWrapper)servlet).getServlet().getClass().getName();
         }
         return servlet.getClass().getName();
+    }
+
+    @Override
+    public boolean isSame(AbstractInfo<Servlet> other) {
+        if (!super.isSame(other)) {
+            return false;
+        }
+        final ServletInfo o = (ServletInfo) other;
+        return Objects.equals(this.name, o.name)
+            && Arrays.equals(this.patterns, o.patterns)
+            && Arrays.equals(this.errorPage, o.errorPage)
+            && this.asyncSupported == o.asyncSupported
+            && this.isResource == o.isResource
+            && Objects.equals(this.multipartConfig, o.multipartConfig)
+            && Objects.equals(this.prefix, o.prefix)
+            && Objects.equals(this.initParams, o.initParams);
     }
 }

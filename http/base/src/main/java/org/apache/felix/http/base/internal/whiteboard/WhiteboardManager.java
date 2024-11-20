@@ -70,6 +70,7 @@ import org.apache.felix.http.base.internal.whiteboard.tracker.ResourceTracker;
 import org.apache.felix.http.base.internal.whiteboard.tracker.ServletContextHelperTracker;
 import org.apache.felix.http.base.internal.whiteboard.tracker.ServletTracker;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
@@ -118,6 +119,7 @@ public final class WhiteboardManager
     private final FailureStateHandler failureStateHandler = new FailureStateHandler();
 
     private volatile ServletContext webContext;
+    private volatile Map<String, Object> attributesForSharedContext = new HashMap<>();
 
     /**
      * Create a new whiteboard http manager
@@ -139,6 +141,7 @@ public final class WhiteboardManager
     /**
      * Start the whiteboard manager
      * @param containerContext The servlet context
+     * @param httpServiceProps Service registration properties
      */
     public void start(final ServletContext containerContext, @NotNull final Dictionary<String, Object> httpServiceProps)
     {
@@ -164,17 +167,17 @@ public final class WhiteboardManager
         this.addContextHelper(new DefaultServletContextHelperInfo());
 
         // Start tracker
-        addTracker(new FilterTracker(this.httpBundleContext, this));
-        addTracker(new ListenersTracker(this.httpBundleContext, this));
         addTracker(new PreprocessorTracker(this.httpBundleContext, this));
-        addTracker(new ServletTracker(this.httpBundleContext, this));
-        addTracker(new ResourceTracker(this.httpBundleContext, this));
+        addTracker(new JavaxPreprocessorTracker(httpBundleContext, this));
+        addTracker(new ListenersTracker(this.httpBundleContext, this));
+        addTracker(new JavaxListenersTracker(httpBundleContext, this));
         addTracker(new ServletContextHelperTracker(this.httpBundleContext, this));
         addTracker(new JavaxServletContextHelperTracker(httpBundleContext, this));
+        addTracker(new FilterTracker(this.httpBundleContext, this));
+        addTracker(new ServletTracker(this.httpBundleContext, this));
+        addTracker(new ResourceTracker(this.httpBundleContext, this));
         addTracker(new JavaxFilterTracker(httpBundleContext, this));
         addTracker(new JavaxServletTracker(httpBundleContext, this));
-        addTracker(new JavaxListenersTracker(httpBundleContext, this));
-        addTracker(new JavaxPreprocessorTracker(httpBundleContext, this));
     }
 
     /**
@@ -192,21 +195,19 @@ public final class WhiteboardManager
      */
     public void stop()
     {
+        this.webContext = null;
+        this.serviceRuntime.unregister();
         for(final ServiceTracker<?, ?> t : this.trackers)
         {
             t.close();
         }
         this.trackers.clear();
-
-        this.serviceRuntime.unregister();
-
         this.preprocessorHandlers = Collections.emptyList();
         this.contextMap.clear();
         this.servicesMap.clear();
         this.failureStateHandler.clear();
+        this.attributesForSharedContext.clear();
         this.registry.reset();
-
-        this.webContext = null;
     }
 
     public void sessionDestroyed(@NotNull final HttpSession session, final Set<String> contextNames)
@@ -225,9 +226,9 @@ public final class WhiteboardManager
 
     /**
      * Handle session id changes
-     * @param session The session where the id changed
+     * @param event The session event
      * @param oldSessionId The old session id
-     * @param contextIds The context ids using that session
+     * @param contextNames The context names using that session
      */
     public void sessionIdChanged(@NotNull final HttpSessionEvent event, final String oldSessionId, final Set<String> contextNames)
     {
@@ -369,6 +370,8 @@ public final class WhiteboardManager
                         {
                             handlerList.add(handler);
                             Collections.sort(handlerList);
+                            setAttributes(handler.getSharedContext());
+
                             this.contextMap.put(info.getName(), handlerList);
 
                             // check for deactivate
@@ -406,9 +409,24 @@ public final class WhiteboardManager
     }
 
     /**
+     * Set the stored attributes on the shared servlet context.
+     * @param context the shared servlet context
+     */
+    private void setAttributes(@Nullable ServletContext context) {
+        if (context != null) {
+            attributesForSharedContext.forEach((key, value) -> {
+                if (key != null && value != null) {
+                    SystemLogger.LOGGER.info("Shared context found, setting stored attribute key: '{}', value: '{}'", key, value);
+                    context.setAttribute(key, value);
+                }
+            });
+        }
+    }
+
+    /**
      * Remove a servlet context helper
      *
-     * @param The servlet context helper info
+     * @param info The servlet context helper info
      */
     public void removeContextHelper(final ServletContextHelperInfo info)
     {
@@ -432,7 +450,7 @@ public final class WhiteboardManager
                             if ( first )
                             {
                                 this.deactivate(handler);
-                                activateNext = true;
+                                activateNext = this.webContext != null;
                             }
                             break;
                         }
@@ -473,34 +491,31 @@ public final class WhiteboardManager
     /**
      * Find the list of matching contexts for the whiteboard service
      */
-    private List<WhiteboardContextHandler> getMatchingContexts(final WhiteboardServiceInfo<?> info)
-    {
+    private List<WhiteboardContextHandler> getMatchingContexts(final WhiteboardServiceInfo<?> info) {
         final List<WhiteboardContextHandler> result = new ArrayList<>();
-        for(final List<WhiteboardContextHandler> handlerList : this.contextMap.values())
-        {
+        for(final List<WhiteboardContextHandler> handlerList : this.contextMap.values()) {
             final WhiteboardContextHandler h = handlerList.get(0);
-            // check whether the servlet context helper is visible to the whiteboard bundle
-            // see chapter 140.2
-            boolean visible = h.getContextInfo().getServiceId() < 0; // internal ones are always visible
-            if ( !visible )
-            {
-                final String filterString = "(" + Constants.SERVICE_ID + "=" + String.valueOf(h.getContextInfo().getServiceId()) + ")";
-                try
-                {
-                    final ServiceReference<?>[] col = info.getServiceReference().getBundle().getBundleContext().getServiceReferences(h.getContextInfo().getServiceType(), filterString);
-                    if ( col !=null && col.length > 0 )
-                    {
-                        visible = true;
+
+            // check if the context matches
+            final boolean matches = h.getContextInfo().match(info);
+            if (matches) {
+                // check whether the servlet context helper is visible to the whiteboard bundle
+                // see chapter 140.2
+                boolean visible = h.getContextInfo().getServiceId() < 0; // internal ones are always visible
+                if ( !visible ) {
+                    final String filterString = "(" + Constants.SERVICE_ID + "=" + String.valueOf(h.getContextInfo().getServiceId()) + ")";
+                    try {
+                        final ServiceReference<?>[] col = info.getServiceReference().getBundle().getBundleContext().getServiceReferences(h.getContextInfo().getServiceType(), filterString);
+                        if ( col !=null && col.length > 0 ) {
+                            visible = true;
+                        }
+                    } catch ( final InvalidSyntaxException ise ) {
+                        // we ignore this and treat it as an invisible service
                     }
                 }
-                catch ( final InvalidSyntaxException ise )
-                {
-                    // we ignore this and treat it as an invisible service
+                if ( visible ) {
+                    result.add(h);
                 }
-            }
-            if ( visible && h.getContextInfo().match(info) )
-            {
-                result.add(h);
             }
         }
         return result;
@@ -914,9 +929,9 @@ public final class WhiteboardManager
      *
      * @param req The request
      * @param res The response
-     * @return {@code true} to continue with dispatching, {@code false} to terminate the request.
-     * @throws IOException
-     * @throws ServletException
+     * @param dispatcher The dispatcher
+     * @throws IOException If the invocation throws an IOException
+     * @throws ServletException If the invocation throws a ServletException
      */
     public void invokePreprocessors(final HttpServletRequest req,
     		final HttpServletResponse res,
@@ -958,5 +973,15 @@ public final class WhiteboardManager
     private void updateRuntimeChangeCount()
     {
         this.serviceRuntime.updateChangeCount();
+    }
+
+    /**
+     * Stores an attribute in the to be created shared servlet context.
+     * @param key attribute key
+     * @param value attribute value
+     */
+    public void setAttributeSharedServletContext(String key, Object value) {
+        SystemLogger.LOGGER.info("Storing attribute for shared servlet context. Key '{}', value: '{}'", key, value);
+        this.attributesForSharedContext.put(key, value);
     }
 }

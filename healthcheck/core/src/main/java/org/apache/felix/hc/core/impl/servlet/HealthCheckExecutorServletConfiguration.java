@@ -26,8 +26,10 @@ import org.osgi.service.metatype.annotations.Option;
 
     String SERVLET_PATH_DEFAULT = "/system/health";
 
-    @AttributeDefinition(name = "Path", description = "Servlet path (defaults to " + SERVLET_PATH_DEFAULT
-            + " in order to not be accessible via Apache/Internet)")
+	@AttributeDefinition(name = "Servlet Context Name", description = "Servlet Context Name to register the servlet with. If not specified, the default context is used.")
+    String servletContextName();
+
+    @AttributeDefinition(name = "Servlet Path", description = "Servlet path (defaults to " + SERVLET_PATH_DEFAULT + ")")
     String servletPath() default SERVLET_PATH_DEFAULT;
 
     @AttributeDefinition(name = "Http Status Mapping", description = "Maps HC result status values to http response codes. Can be overwritten via request parameter 'httpStatus'")

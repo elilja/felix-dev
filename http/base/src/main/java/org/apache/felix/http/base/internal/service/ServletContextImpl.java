@@ -35,14 +35,14 @@ import org.apache.felix.http.base.internal.context.ExtServletContext;
 import org.apache.felix.http.base.internal.dispatch.RequestDispatcherImpl;
 import org.apache.felix.http.base.internal.dispatch.RequestInfo;
 import org.apache.felix.http.base.internal.handler.ServletHandler;
-import org.apache.felix.http.base.internal.javaxwrappers.ServletRequestWrapper;
-import org.apache.felix.http.base.internal.javaxwrappers.ServletResponseWrapper;
 import org.apache.felix.http.base.internal.logger.SystemLogger;
 import org.apache.felix.http.base.internal.registry.PathResolution;
 import org.apache.felix.http.base.internal.registry.PerContextHandlerRegistry;
 import org.apache.felix.http.base.internal.registry.ServletResolution;
 import org.apache.felix.http.base.internal.util.MimeTypes;
 import org.apache.felix.http.base.internal.util.UriUtils;
+import org.apache.felix.http.javaxwrappers.ServletRequestWrapper;
+import org.apache.felix.http.javaxwrappers.ServletResponseWrapper;
 import org.osgi.framework.Bundle;
 import org.osgi.service.http.HttpContext;
 
@@ -66,7 +66,6 @@ import jakarta.servlet.http.HttpSessionAttributeListener;
 import jakarta.servlet.http.HttpSessionListener;
 import jakarta.servlet.http.MappingMatch;
 
-@SuppressWarnings("deprecation")
 public class ServletContextImpl implements ExtServletContext
 {
     private final Bundle bundle;
@@ -346,10 +345,9 @@ public class ServletContextImpl implements ExtServletContext
         return this.context.getServerInfo();
     }
 
-    @Override
     public Servlet getServlet(String name) throws ServletException
     {
-        return this.context.getServlet(name);
+		throw new UnsupportedOperationException("Deprecated method not supported");
     }
 
     @Override
@@ -358,10 +356,9 @@ public class ServletContextImpl implements ExtServletContext
         return HttpServiceFactory.HTTP_SERVICE_CONTEXT_NAME;
     }
 
-    @Override
     public Enumeration<String> getServletNames()
     {
-        return this.context.getServletNames();
+		throw new UnsupportedOperationException("Deprecated method not supported");
     }
 
     @Override
@@ -376,10 +373,9 @@ public class ServletContextImpl implements ExtServletContext
         return this.context.getServletRegistrations();
     }
 
-    @Override
     public Enumeration<Servlet> getServlets()
     {
-        return this.context.getServlets();
+		throw new UnsupportedOperationException("Deprecated method not supported");
     }
 
     @Override
@@ -424,7 +420,6 @@ public class ServletContextImpl implements ExtServletContext
         // nothing to do
     }
 
-    @Override
     public void log(Exception cause, String message)
     {
         SystemLogger.LOGGER.error(message, cause);

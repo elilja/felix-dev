@@ -33,8 +33,6 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.felix.webconsole.internal.misc.ServletSupport;
 import org.apache.felix.webconsole.spi.ConfigurationHandler;
 import org.apache.felix.webconsole.spi.ValidationException;
@@ -43,6 +41,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.metatype.AttributeDefinition;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 class ConfigAdminSupport {
@@ -133,7 +133,7 @@ class ConfigAdminSupport {
         final List<String> propsToKeep = new ArrayList<>();
         for(final String propName : propertyList)
         {
-            final String paramName = "action".equals(propName) //$NON-NLS-1$
+            final String paramName = "action".equals(propName)
                     || ConfigManager.ACTION_DELETE.equals(propName)
                     || ConfigManager.ACTION_APPLY.equals(propName)
                     || ConfigManager.PROPERTY_LIST.equals(propName)
@@ -290,7 +290,7 @@ class ConfigAdminSupport {
                 // dynamic bundle location and then try to set both to null
                 if ( config.getBundleLocation() != null )
                 {
-                    config.setBundleLocation( "??invalid:bundle/location" ); //$NON-NLS-1$
+                    config.setBundleLocation( "??invalid:bundle/location" );
                     config.setBundleLocation( null );
                 }
             }

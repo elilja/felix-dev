@@ -19,10 +19,10 @@ package org.apache.felix.http.base.internal.whiteboard.tracker;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.felix.http.base.internal.jakartawrappers.ServletContextHelperWrapper;
 import org.apache.felix.http.base.internal.runtime.ServletContextHelperInfo;
 import org.apache.felix.http.base.internal.util.ServiceUtils;
 import org.apache.felix.http.base.internal.whiteboard.WhiteboardManager;
+import org.apache.felix.http.base.internal.wrappers.ServletContextHelperWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -86,8 +86,12 @@ public final class JavaxServletContextHelperTracker extends ServiceTracker<Servl
     @Override
     public final void modifiedService(@NotNull final ServiceReference<ServletContextHelper> ref, @NotNull final ServiceReference<ServletContextHelper> service)
     {
-        this.removed(ref);
-        this.added(ref);
+        final ServletContextHelperInfo newInfo = new ServletContextHelperInfo(ref);
+        final ServletContextHelperInfo oldInfo = this.allInfos.get(ref.getProperty(Constants.SERVICE_ID));
+        if (oldInfo == null || !newInfo.isSame(oldInfo)) {
+            this.removed(ref);
+            this.added(ref);
+        }
     }
 
     @Override

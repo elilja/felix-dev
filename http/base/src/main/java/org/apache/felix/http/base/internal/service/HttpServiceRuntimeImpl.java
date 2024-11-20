@@ -24,11 +24,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.felix.http.base.internal.javaxwrappers.RuntimeServiceWrapper;
 import org.apache.felix.http.base.internal.registry.HandlerRegistry;
 import org.apache.felix.http.base.internal.runtime.dto.RequestInfoDTOBuilder;
 import org.apache.felix.http.base.internal.runtime.dto.RuntimeDTOBuilder;
 import org.apache.felix.http.base.internal.whiteboard.WhiteboardManager;
+import org.apache.felix.http.base.internal.wrappers.RuntimeServiceWrapper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
@@ -124,7 +124,7 @@ public final class HttpServiceRuntimeImpl implements HttpServiceRuntime
         {
             replacement.put(key, newAttributes.get(key));
         }
-        replacement.put(PROP_CHANGECOUNT, this.changeCount);
+        replacement.put(PROP_CHANGECOUNT, this.changeCount.get());
         attributes = replacement;
     }
 
