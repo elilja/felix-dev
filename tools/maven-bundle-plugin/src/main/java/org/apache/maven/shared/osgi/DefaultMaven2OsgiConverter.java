@@ -253,9 +253,6 @@ public class DefaultMaven2OsgiConverter implements Maven2OsgiConverter
      * Clean up version parameters. Other builders use more fuzzy definitions of
      * the version syntax. This method cleans up such a version to match an OSGi
      * version.
-     *
-     * @param VERSION_STRING
-     * @return
      */
     static final Pattern FUZZY_VERSION = Pattern.compile( "(\\d+)(\\.(\\d+)(\\.(\\d+))?)?([^a-zA-Z0-9](.*))?",
         Pattern.DOTALL );
