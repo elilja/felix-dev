@@ -1,4 +1,4 @@
-String manifest = new File( basedir, "target/classes/META-INF/MANIFEST.MF" ).text
+String manifest = new File(basedir, "target/classes/META-INF/MANIFEST.MF").text
 assert !manifest.isEmpty()
 
 manifest.eachLine() { line ->
@@ -9,5 +9,3 @@ manifest.eachLine() { line ->
         throw new Exception("The multi release jar is not properly embedded")
     }
 }
-
-
